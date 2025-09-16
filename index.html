@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sarvos — Portais & Interações</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:wght@400;500;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root{
+      /* Paleta Principal - Cores escuras dominam */
+      --night:#0B0C10;          /* Noite Profunda - base */
+      --obsidian:#1F2833;       /* Azul Obsidiana - secundário */
+      --void:#0A0B0F;           /* Vazio místico - acentos */
+      --silver:#C5C6C7;         /* Cinza Prata - texto secundário */
+      --pearl:#E8E9EA;          /* Pérola - texto principal */
+      --gold:#f4c20d;           /* Dourado Alquímico - acento único */
+      --gold-glow:rgba(244,194,13,0.3); /* Brilho dourado */
+      --white:#F8F8F8;          /* Branco Etéreo - destaque */
+      
+      /* Tokens de Design */
+      --radius:22px;
+      --radius-sm:12px;
+      --radius-lg:28px;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --shadow-glow:0 0 40px var(--gold-glow);
+      --transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow:all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Espaçamento Generoso */
+      --space-xs:4px;
+      --space-sm:8px;
+      --space-md:16px;
+      --space-lg:24px;
+      --space-xl:32px;
+      --space-2xl:48px;
+      --space-3xl:72px;
+      
+      /* Tipografia Hierárquica */
+      --font-display:"Cinzel Decorative", "Playfair Display", Georgia, "Times New Roman", serif;
+      --font-serif:"Playfair Display", Georgia, "Times New Roman", serif;
+      --font-sans:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --font-mono:ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; 
+      background:
+        radial-gradient(1200px 900px at 80% -10%, #22314a 0%, var(--night) 55%),
+        linear-gradient(135deg, var(--void) 0%, var(--night) 100%);
+      background-attachment: fixed;
+      color:var(--pearl); 
+      font:500 16px/1.6 var(--font-sans);
+      overflow-x:hidden;
+      letter-spacing:0.01em;
+    }
+    
+    /* Texturas sutis de fundo */
+    body::before{
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(244,194,13,0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(244,194,13,0.02) 0%, transparent 50%);
+      opacity:0.6;
+    }
+    
+    .wrap{max-width:1120px;margin:0 auto;padding:var(--space-2xl)}
+    
+    /* Header com hierarquia clara */
+    header{
+      display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);
+      margin-bottom:var(--space-xl);flex-wrap:wrap;
+    }
+    
+    .brand{display:flex;align-items:center;gap:var(--space-md)}
+    
+    .brand .sigil{
+      width:48px;height:48px;border-radius:50%;
+      background:
+        radial-gradient(circle at 30% 30%, var(--gold), #b08900 55%, transparent 56%), 
+        conic-gradient(from 0deg at 50% 50%, var(--gold-glow), transparent 30%, rgba(244,194,13,0.18) 60%, transparent 100%);
+      position:relative;
+      box-shadow:0 0 40px var(--gold-glow) inset, 0 0 18px var(--gold-glow);
+      transition:var(--transition);
+    }
+    .brand .sigil:hover{transform:scale(1.05); box-shadow:0 0 50px var(--gold-glow) inset, 0 0 25px var(--gold-glow);}
+    
+    h1{
+      margin:0;
+      font-family:var(--font-display);
+      letter-spacing:0.8px; 
+      font-size:28px;
+      background:linear-gradient(180deg, var(--gold), #d4b100 60%, #9a7b00);
+      -webkit-background-clip:text; 
+      background-clip:text; 
+      color:transparent;
+      text-shadow:0 0 24px rgba(255,215,0,.15);
+      font-weight:700;
+    }
+    
+    .sub{
+      color:var(--silver);
+      font-family:var(--font-serif);
+      opacity:0.9;
+      font-size:15px;
+      letter-spacing:0.02em;
+    }
+
+    /* Card base com espaçamento generoso */
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.1); 
+      border-radius:var(--radius); 
+      box-shadow:var(--shadow);
+      transition:var(--transition);
+    }
+    .card:hover{transform:translateY(-2px); box-shadow:0 25px 70px rgba(0,0,0,.5);}
+    
+    .hd{
+      padding:var(--space-lg) var(--space-xl);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .bd{padding:var(--space-xl)}
+
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--space-lg)}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+
+    /* Portais com microinterações premium */
+    .portals{display:flex;gap:var(--space-lg);flex-wrap:wrap;align-items:center;justify-content:center}
+    
+    .portal{
+      position:relative;
+      width:clamp(100px, 22vw, 150px);
+      height:clamp(100px, 22vw, 150px);
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(244,194,13,.15), rgba(244,194,13,0) 70%),
+        radial-gradient(80px 80px at 50% 50%, rgba(255,255,255,.06), rgba(255,255,255,0));
+      border:2px solid rgba(244,194,13,.5); 
+      box-shadow:0 0 40px var(--gold-glow) inset, 0 0 20px var(--gold-glow);
+      display:grid;place-items:center; 
+      cursor:pointer; 
+      transition:var(--transition);
+      min-height:44px; /* Acessibilidade - tamanho mínimo de clique */
+    }
+    
+    .portal:hover{
+      transform:translateY(-4px) scale(1.02); 
+      box-shadow:0 0 60px var(--gold-glow) inset, 0 0 35px var(--gold-glow), 0 10px 30px rgba(0,0,0,.3);
+    }
+    
+    .portal:focus{
+      outline:3px solid var(--gold);
+      outline-offset:4px;
+    }
+    
+    .portal.locked{
+      filter:grayscale(.8) opacity(.6); 
+      border-style:dashed;
+      cursor:not-allowed;
+    }
+    /* Popover para portal bloqueado */
+    .portal.locked:hover .popover{
+      opacity:1; transform:translate(-50%, -8px) scale(1); pointer-events:auto;
+    }
+    .popover{
+      position:absolute; left:50%; top:-12px; transform:translate(-50%, -4px) scale(.98);
+      background:rgba(10,11,15,.96); color:var(--pearl);
+      border:1px solid rgba(244,194,13,.3); border-radius:10px;
+      padding:6px 10px; font-size:12px; white-space:nowrap; pointer-events:none;
+      box-shadow:0 8px 24px rgba(0,0,0,.4);
+      opacity:0; transition:var(--transition);
+    }
+    .popover::after{
+      content:''; position:absolute; left:50%; bottom:-6px; transform:translateX(-50%);
+      width:10px; height:10px; background:rgba(10,11,15,.96); border-left:1px solid rgba(244,194,13,.3); border-bottom:1px solid rgba(244,194,13,.3);
+      transform-origin:center; rotate:45deg;
+    }
+    
+    .portal.locked::after{
+      content:'🔒'; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+      font-size:20px; opacity:0.7;
+    }
+    
+    .portal .title{
+      font-family:var(--font-display); 
+      text-align:center; 
+      padding:0 var(--space-sm); 
+      font-size:13px;
+      line-height:1.3;
+      font-weight:600;
+    }
+    
+    .portal .level{
+      position:absolute; 
+      top:-10px; 
+      right:-10px; 
+      width:40px; 
+      height:40px; 
+      border-radius:50%;
+      background:linear-gradient(180deg, var(--gold), #b08900); 
+      display:grid; 
+      place-items:center; 
+      font-weight:800; 
+      color:var(--night);
+      border:3px solid var(--night);
+      font-size:14px;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+    }
+
+    /* Partículas otimizadas com performance */
+    .particles{position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1}
+    .p{position:absolute; width:2px; height:2px; background:var(--gold); opacity:.6; border-radius:50%; filter:blur(.5px); animation:rise linear infinite}
+    @keyframes rise{from{transform:translateY(0); opacity:.1}to{transform:translateY(-140vh); opacity:0}}
+    @media (prefers-reduced-motion: reduce){ .p{animation:none} }
+
+    /* Mirror com atmosfera ritualística */
+    .mirror{
+      position:relative; 
+      border-radius:var(--radius-lg); 
+      padding:var(--space-xl); 
+      background:
+        linear-gradient(180deg, rgba(244,194,13,.08), rgba(255,255,255,.04)),
+        radial-gradient(circle at 50% 0%, rgba(244,194,13,.05), transparent 70%);
+      border:2px solid rgba(244,194,13,.4); 
+      box-shadow: 
+        inset 0 0 50px rgba(244,194,13,.1), 
+        0 15px 50px rgba(0,0,0,.4),
+        0 0 30px rgba(244,194,13,.1);
+      transition:var(--transition);
+    }
+    .mirror:hover{box-shadow: inset 0 0 60px rgba(244,194,13,.15), 0 20px 60px rgba(0,0,0,.5), 0 0 40px rgba(244,194,13,.15);}
+    
+    .mirror h3{
+      margin:0 0 var(--space-md); 
+      font-family:var(--font-display);
+      font-size:20px;
+      color:var(--gold);
+      text-shadow:0 0 20px var(--gold-glow);
+    }
+    
+    .mirror .msg{
+      min-height:160px; 
+      color:var(--pearl);
+      font-size:16px;
+      line-height:1.6;
+      font-family:var(--font-serif);
+      font-style:italic;
+    }
+    
+    /* Toolbar com microinterações */
+    .toolbar{display:flex; gap:var(--space-sm); margin-top:var(--space-lg); flex-wrap:wrap}
+    
+    .btn{
+      cursor:pointer; 
+      border:2px solid rgba(255,255,255,.2); 
+      background:rgba(255,255,255,.08); 
+      color:var(--pearl); 
+      padding:var(--space-md) var(--space-lg); 
+      border-radius:var(--radius-sm); 
+      font-weight:600;
+      font-size:14px;
+      transition:var(--transition);
+      min-height:44px;
+      display:flex;align-items:center;gap:var(--space-sm);
+    }
+    
+    .btn:hover{
+      background:rgba(255,255,255,.12);
+      border-color:rgba(244,194,13,.4);
+      transform:translateY(-1px);
+      box-shadow:0 4px 12px rgba(0,0,0,.2);
+    }
+    
+    .btn:focus{
+      outline:3px solid var(--gold);
+      outline-offset:2px;
+    }
+    
+    .btn.primary{
+      background:linear-gradient(180deg, var(--gold), #caa800); 
+      color:var(--night); 
+      border:none;
+      font-weight:700;
+      box-shadow:0 4px 15px rgba(244,194,13,.3);
+      position:relative;
+      overflow:hidden;
+    }
+    .btn.primary::before{
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(45deg, transparent 30%, rgba(255,255,255,.2) 50%, transparent 70%);
+      transform:translateX(-100%); transition:transform 0.6s;
+    }
+    .btn.primary:hover::before{transform:translateX(100%);}
+    .btn.primary:hover{
+      background:linear-gradient(180deg, #ffd700, #b8941f);
+      transform:translateY(-2px) scale(1.02);
+      box-shadow:0 6px 20px rgba(244,194,13,.4), 0 0 30px rgba(244,194,13,.2);
+    }
+    .btn.primary:active{transform:translateY(0) scale(0.98);}
+    
+    /* Animação de pulsar para CTA principal */
+    .btn.primary.pulse{
+      animation:pulseGlow 2s ease-in-out infinite;
+    }
+    @keyframes pulseGlow{
+      0%, 100% { box-shadow:0 4px 15px rgba(244,194,13,.3), 0 0 20px rgba(244,194,13,.1); }
+      50% { box-shadow:0 4px 15px rgba(244,194,13,.5), 0 0 30px rgba(244,194,13,.3); }
+    }
+    
+    .btn.ghost{background:transparent; border-color:rgba(255,255,255,.3);}
+    .btn.ghost:hover{background:rgba(255,255,255,.05);}
+    
+    .btn.toggle-active{
+      outline:3px solid var(--gold);
+      box-shadow:0 0 20px var(--gold-glow);
+      background:rgba(244,194,13,.1);
+      border-color:var(--gold);
+    }
+
+    /* Grimório com atmosfera mística */
+    .log{
+      --row:rgba(255,255,255,.04); 
+      --bd:rgba(255,255,255,.07); 
+      background:
+        linear-gradient(180deg, var(--row), transparent),
+        radial-gradient(circle at 50% 0%, rgba(244,194,13,.02), transparent 50%);
+      border:1px dashed var(--bd);
+      border-radius:var(--radius-sm); 
+      padding:var(--space-lg); 
+      font-family:var(--font-mono); 
+      font-size:13px; 
+      max-height:400px; 
+      overflow:auto;
+      line-height:1.5;
+    }
+    .log-entry{
+      padding:var(--space-sm) var(--space-md); 
+      border-bottom:1px dashed rgba(255,255,255,.06);
+      transition:var(--transition);
+    }
+    .log-entry:hover{background:rgba(244,194,13,.05);}
+
+    /* Divisores alquímicos simbólicos */
+    .divider{
+      height:2px; 
+      background:linear-gradient(90deg, transparent, var(--gold), rgba(244,194,13,.3), var(--gold), transparent); 
+      margin:var(--space-xl) 0;
+      position:relative;
+    }
+    .divider::before{
+      content:'✦'; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);
+      background:var(--night); padding:0 var(--space-sm); color:var(--gold);
+      font-size:12px;
+      animation:twinkle 3s ease-in-out infinite;
+    }
+    @keyframes twinkle{
+      0%, 100% { opacity:0.6; transform:translate(-50%, -50%) scale(1); }
+      50% { opacity:1; transform:translate(-50%, -50%) scale(1.1); }
+    }
+    
+    /* Ícones simbólicos adicionais */
+    .symbolic-icon{
+      display:inline-block; margin:0 var(--space-xs);
+      color:var(--gold); opacity:0.7;
+      font-size:14px;
+      animation:float 4s ease-in-out infinite;
+    }
+    @keyframes float{
+      0%, 100% { transform:translateY(0); }
+      50% { transform:translateY(-2px); }
+    }
+
+    /* Hero com atmosfera ritualística */
+    .hero{
+      position:relative; 
+      border-radius:var(--radius-lg); 
+      padding:var(--space-3xl) var(--space-2xl); 
+      background:
+        radial-gradient(800px 400px at 50% 0%, rgba(244,194,13,.12), rgba(244,194,13,0)),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:2px solid rgba(244,194,13,.2); 
+      box-shadow:var(--shadow), 0 0 40px rgba(244,194,13,.1); 
+      text-align:center; 
+      display:grid; 
+      place-items:center;
+      transition:var(--transition);
+    }
+    .hero:hover{
+      box-shadow:0 25px 80px rgba(0,0,0,.5), 0 0 60px rgba(244,194,13,.15);
+      transform:translateY(-2px);
+    }
+    
+    .hero h2{
+      font-family:var(--font-display); 
+      font-size:38px; 
+      margin:0 0 var(--space-md); 
+      letter-spacing:0.6px;
+      background:linear-gradient(180deg, var(--gold), #d4b100 60%, #9a7b00); 
+      -webkit-background-clip:text; 
+      background-clip:text; 
+      color:transparent;
+      text-shadow:0 0 30px var(--gold-glow);
+    }
+    
+    .hero p{
+      font-family:var(--font-serif); 
+      color:var(--silver); 
+      margin:0 0 var(--space-xl);
+      font-size:18px;
+      line-height:1.6;
+      font-style:italic;
+    }
+    
+    /* Frases-chave em itálico elegante */
+    .highlight-phrase{
+      font-style:italic;
+      color:var(--gold);
+      text-shadow:0 0 10px rgba(244,194,13,.3);
+      font-weight:500;
+    }
+
+    /* Cards de planos balanceados */
+    .pricing{display:grid; gap:var(--space-lg)}
+    .price-card{
+      background:
+        linear-gradient(180deg, rgba(31,40,51,.7), rgba(31,40,51,.4)),
+        radial-gradient(circle at 50% 0%, rgba(244,194,13,.03), transparent 50%);
+      border:1px solid rgba(255,255,255,.1); 
+      border-radius:var(--radius); 
+      padding:var(--space-xl); 
+      line-height:1.6;
+      transition:var(--transition);
+    }
+    .price-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 10px 30px rgba(0,0,0,.3);
+      border-color:rgba(244,194,13,.3);
+    }
+    
+    .kpis{display:flex; gap:var(--space-sm); flex-wrap:wrap; color:var(--silver)}
+    .kpi{
+      padding:var(--space-sm) var(--space-md); 
+      border-radius:999px; 
+      border:1px solid rgba(255,255,255,.2); 
+      background:rgba(255,255,255,.08);
+      font-size:12px;
+      font-weight:500;
+      transition:var(--transition);
+    }
+    .kpi:hover{background:rgba(244,194,13,.1); border-color:rgba(244,194,13,.4);}
+
+    /* Breadcrumbs discretos */
+    .breadcrumb{
+      display:flex; align-items:center; gap:var(--space-sm);
+      color:var(--silver); font-size:13px; margin-bottom:var(--space-md);
+    }
+    .breadcrumb span{opacity:0.6}
+    .breadcrumb .current{color:var(--gold); font-weight:600;}
+
+    footer{margin-top:var(--space-2xl); color:var(--silver); font-size:12px; text-align:center; opacity:0.8}
+    
+    /* Modal com transições suaves */
+    .modal{
+      position:fixed; inset:0; 
+      background:rgba(11,12,16,.85); 
+      display:none; 
+      align-items:center; 
+      justify-content:center; 
+      padding:var(--space-xl); 
+      z-index:9999;
+      backdrop-filter:blur(8px);
+    }
+    .modal.show{display:flex; animation:fadeIn 0.3s ease;}
+    @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+    
+    .dialog{
+      max-width:920px; width:100%; 
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        radial-gradient(circle at 50% 0%, rgba(244,194,13,.05), transparent 50%);
+      border:2px solid rgba(255,255,255,.15); 
+      border-radius:var(--radius-lg); 
+      box-shadow:0 40px 100px rgba(0,0,0,.7), 0 0 50px rgba(244,194,13,.1);
+      animation:slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideUp{from{transform:translateY(30px); opacity:0} to{transform:translateY(0); opacity:1}}
+    
+    .dialog .hd{border-bottom:1px solid rgba(255,255,255,.1); padding:var(--space-xl)}
+    .close{
+      cursor:pointer; 
+      border:2px solid rgba(255,255,255,.2); 
+      background:rgba(255,255,255,.08); 
+      color:var(--pearl); 
+      padding:var(--space-sm) var(--space-md); 
+      border-radius:var(--radius-sm); 
+      font-weight:600;
+      transition:var(--transition);
+    }
+    .close:hover{background:rgba(255,255,255,.12); border-color:rgba(244,194,13,.4);}
+
+    /* Breakpoints responsivos */
+    /* Tablet */
+    @media(max-width:980px){
+      .grid{grid-template-columns:1fr; gap:var(--space-md)}
+      .portals{gap:var(--space-md)}
+      .hero{padding:var(--space-2xl) var(--space-lg)}
+    }
+    
+    /* Mobile */
+    @media(max-width:720px){
+      .grid{display:block}
+      #interaction .card + aside{margin-top:var(--space-lg)}
+      .portals{justify-content:center; gap:var(--space-sm)}
+      .portal{width:clamp(80px, 18vw, 120px); height:clamp(80px, 18vw, 120px);}
+      .hero{padding:var(--space-xl) var(--space-md)}
+      .hero h2{font-size:28px}
+      .hero p{font-size:16px}
+      .wrap{padding:var(--space-lg)}
+      .btn{padding:var(--space-sm) var(--space-md); font-size:13px}
+      .toolbar{gap:var(--space-xs)}
+    }
+    
+    /* Mobile pequeno */
+    @media(max-width:480px){
+      .wrap{padding:var(--space-md)}
+      .hero{padding:var(--space-lg) var(--space-sm)}
+      .hero h2{font-size:24px}
+      .portal{width:clamp(70px, 16vw, 100px); height:clamp(70px, 16vw, 100px);}
+      .portal .title{font-size:11px; padding:0 var(--space-xs)}
+      .btn{padding:var(--space-xs) var(--space-sm); font-size:12px}
+    }
+    
+    /* Transições entre telas */
+    .fade-in{animation:fadeIn 0.5s ease;}
+    .slide-in{animation:slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);}
+    @keyframes slideIn{from{transform:translateX(-20px); opacity:0} to{transform:translateX(0); opacity:1}}
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles" aria-hidden="true"></div>
+  <!-- SVG Symbols: Ícones alquímicos -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute; width:0; height:0; overflow:hidden" aria-hidden="true">
+    <symbol id="icon-mic" viewBox="0 0 24 24">
+      <path d="M12 14a4 4 0 0 0 4-4V7a4 4 0 0 0-8 0v3a4 4 0 0 0 4 4z"/>
+      <path d="M5 11a7 7 0 0 0 14 0" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 18v3" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="icon-pen" viewBox="0 0 24 24">
+      <path d="M3 17.25V21h3.75L18.81 8.94l-3.75-3.75L3 17.25z"/>
+      <path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+    </symbol>
+    <symbol id="icon-cam" viewBox="0 0 24 24">
+      <path d="M3 7h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"/>
+      <path d="M21 8l-4 3v2l4 3V8z"/>
+    </symbol>
+  </svg>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="sigil" aria-hidden="true"></div>
+        <div>
+          <h1>Sarvos — Cada palavra é um espelho</h1>
+          <div class="sub">"Você está pronto para atravessar o portal?"</div>
+        </div>
+      </div>
+      <button class="btn primary" id="goLevels" aria-label="Entrar no Templo">Entrar no Templo</button>
+    </header>
+
+    <!-- HOME / HERO -->
+    <section class="hero card fade-in" id="home">
+      <h2>Eco dos Portais</h2>
+      <p>Em cada <span class="highlight-phrase">palavra</span>, um universo se revela. Em cada <span class="highlight-phrase">silêncio</span>, uma verdade se esconde.</p>
+      <button class="btn primary" id="startNv0" aria-label="Atravessar o portal inicial">Atravessar</button>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- LEVELS / PORTALS -->
+    <section class="card slide-in" id="levels" style="display:none">
+      <div class="hd">
+        <strong style="font-family:var(--font-display)">Portais</strong>
+        <div style="color:var(--silver)">Passe o mouse/toque <span class="symbolic-icon">✦</span> os portais respiram.</div>
+      </div>
+      <div class="bd">
+        <div class="portals" role="list">
+          <!-- 0..4 -->
+          <div class="portal" data-level="0" id="p0" role="button" tabindex="0" aria-label="Abrir Nv 0 — Eco dos Portais" title="Portal disponível - Eco dos Portais"><span class="title">Nv 0 — Eco dos Portais</span><span class="level">0</span></div>
+          <div class="portal locked" data-level="1" id="p1" role="button" tabindex="0" aria-label="Portal bloqueado - Nv 01 — Aprendiz das Letras" title="Portal bloqueado - Complete o nível anterior"><span class="title">Nv 01 — Aprendiz das Letras</span><span class="level">1</span><span class="popover">Complete o nível anterior para abrir</span></div>
+          <div class="portal locked" data-level="2" id="p2" role="button" tabindex="0" aria-label="Portal bloqueado - Nv 02 — Guardião do Verbo" title="Portal bloqueado - Complete o nível anterior"><span class="title">Nv 02 — Guardião do Verbo</span><span class="level">2</span><span class="popover">Complete o nível anterior para abrir</span></div>
+          <div class="portal locked" data-level="3" id="p3" role="button" tabindex="0" aria-label="Portal bloqueado - Nv 03 — Esculpidor de Frases" title="Portal bloqueado - Complete o nível anterior"><span class="title">Nv 03 — Esculpidor de Frases</span><span class="level">3</span><span class="popover">Complete o nível anterior para abrir</span></div>
+          <div class="portal locked" data-level="4" id="p4" role="button" tabindex="0" aria-label="Portal bloqueado - Nv 04 — Transcritor do Invisível" title="Portal bloqueado - Complete o nível anterior"><span class="title">Nv 04 — Transcritor do Invisível</span><span class="level">4</span><span class="popover">Complete o nível anterior para abrir</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- INTERACTION / MIRROR -->
+    <section class="grid" id="interaction" style="display:none">
+      <div class="card slide-in" data-section="mirror">
+        <div class="hd">
+          <strong style="font-family:var(--font-display)" id="mirrorTitle">Espelho Mágico</strong>
+          <div class="breadcrumb" id="breadcrumb" style="display:none">
+            <span>Você está em:</span>
+            <span class="current" id="currentLevel">Nv 0</span>
+            <span>></span>
+            <span>Espelho</span>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="mirror" id="mirror">
+            <h3 id="mirrorHeading">Nv 0 — Eco dos Portais</h3>
+            <div class="msg" id="mirrorMsg">"Sussurre o seu primeiro verbo."</div>
+            <div class="toolbar">
+              <button class="btn" id="mic" aria-pressed="false" aria-label="Ativar microfone para gravação de áudio">
+                <svg width="18" height="18" aria-hidden="true"><use href="#icon-mic"/></svg> Microfone
+              </button>
+              <button class="btn" id="pen" aria-pressed="false" aria-label="Ativar modo de escrita de texto">
+                <svg width="18" height="18" aria-hidden="true"><use href="#icon-pen"/></svg> Escrever
+              </button>
+              <button class="btn" id="cam" aria-pressed="false" aria-label="Ativar gravação de vídeo">
+                <svg width="18" height="18" aria-hidden="true"><use href="#icon-cam"/></svg> Vídeo
+              </button>
+              <button class="btn primary" id="send" aria-label="Enviar mensagem para o espelho">Invocar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="card" data-section="grimorio">
+        <div class="hd"><strong>Grimório</strong></div>
+        <div class="bd">
+          <div class="log" id="log" role="log" aria-live="polite"></div>
+          <div class="divider"></div>
+          <div class="pricing" id="pricing" style="display:none">
+            <div class="price-card">
+              <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Nv 01 — Aprendiz das Letras</div>
+              <div style="font-family:'Playfair Display',serif; color:var(--silver); margin-bottom:8px">Quem escreve para si, começa a lembrar de quem é.</div>
+              <div class="kpis">
+                <span class="kpi">20 interações/mês</span>
+                <span class="kpi">Somente texto</span>
+                <span class="kpi">R$ 29,90</span>
+              </div>
+              <div style="margin-top:10px; display:flex; gap:8px">
+                <button class="btn primary" id="startLv1">🔮 Iniciar Escrita</button>
+                <button class="btn ghost" id="viewPlans">Ver planos</button>
+              </div>
+            </div>
+          </div>
+          <div class="toolbar" id="mobileTabs" style="display:none; margin-top:10px">
+            <button class="btn" data-tab="mirror">Espelho</button>
+            <button class="btn" data-tab="grimorio">Grimório</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer>Use este HTML em um nó <em>Respond to Webhook</em> do n8n com <code>Content-Type: text/html</code>. Ícones alquímicos aparecem como divisores e brilhos dourados simbolizam a travessia.</footer>
+
+    <!-- PLANS PAGE -->
+    <section class="card" id="plans" style="display:none; margin-top:16px">
+      <div class="hd">
+        <strong style="font-family:'Cinzel Decorative',serif">Planos Sarvos</strong>
+        <div style="color:var(--silver)">Escolha seu portal de iniciação</div>
+      </div>
+      <div class="bd">
+        <div class="pricing" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Nv 0 — Eco dos Portais</div>
+            <div class="kpis">
+              <span class="kpi">4 interações/mês</span>
+              <span class="kpi">Texto</span>
+              <span class="kpi">1/dia</span>
+              <span class="kpi">Gratuito</span>
+            </div>
+            <div style="margin-top:10px"><button class="btn primary" data-plan="nv0">Entrar</button></div>
+          </div>
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Nv 01 — Aprendiz das Letras</div>
+            <div class="kpis">
+              <span class="kpi">20 interações/mês</span>
+              <span class="kpi">Texto</span>
+              <span class="kpi">1/dia</span>
+              <span class="kpi">R$ 29,90</span>
+            </div>
+            <div style="margin-top:10px"><button class="btn primary" data-plan="nv1">Assinar</button></div>
+          </div>
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Nv 02 — Guardião do Verbo</div>
+            <div class="kpis">
+              <span class="kpi">40 interações/mês</span>
+              <span class="kpi">Texto + Áudio</span>
+              <span class="kpi">2/dia</span>
+              <span class="kpi">R$ 49,90</span>
+            </div>
+            <div style="margin-top:10px"><button class="btn primary" data-plan="nv2">Assinar</button></div>
+          </div>
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Nv 03 — Esculpidor de Frases</div>
+            <div class="kpis">
+              <span class="kpi">60 interações/mês</span>
+              <span class="kpi">Texto + Áudio</span>
+              <span class="kpi">2/dia</span>
+              <span class="kpi">R$ 69,90</span>
+            </div>
+            <div style="margin-top:10px"><button class="btn primary" data-plan="nv3">Assinar</button></div>
+          </div>
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Nv 04 — Transcritor do Invisível</div>
+            <div class="kpis">
+              <span class="kpi">80 interações/mês</span>
+              <span class="kpi">Texto + Áudio/Vídeo</span>
+              <span class="kpi">4/dia</span>
+              <span class="kpi">R$ 99,90</span>
+            </div>
+            <div style="margin-top:10px"><button class="btn primary" data-plan="nv4">Assinar</button></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div style="display:grid; gap:12px">
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Rollover de Créditos</div>
+            <div style="color:var(--silver)">Até 20% das interações não usadas rolam para o mês seguinte (expiram ao final do mês seguinte).</div>
+          </div>
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Add‑ons</div>
+            <div class="kpis">
+              <span class="kpi">Áudio 10×2min — R$ 9,90</span>
+              <span class="kpi">Áudio 20×2min — R$ 19,90</span>
+              <span class="kpi">Áudio 20×4min — R$ 29,90</span>
+            </div>
+          </div>
+          <div class="price-card">
+            <div style="font-family:'Cinzel Decorative',serif; margin-bottom:6px">Modo Vigília Compassiva (Profissionais)</div>
+            <div style="color:var(--silver)">Compartilhe, com consentimento, o histórico simbólico do cliente com um profissional autorizado. Requer Nv 02+.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MODAL: planos por nível / catálogo -->
+  <div class="modal" id="modal" aria-hidden="true" aria-modal="true" role="dialog">
+    <div class="dialog">
+      <div class="hd">
+        <strong style="font-family:'Cinzel Decorative',serif" id="modalTitle">Planos Sarvos</strong>
+        <button class="close" id="modalClose" aria-label="Fechar">Fechar</button>
+      </div>
+      <div class="bd" id="modalBody"></div>
+    </div>
+  </div>
+
+  <audio id="snd" preload="auto">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="js/ui.js"></script>
+  <script src="js/anim.js"></script>
+  <script src="js/logic.js"></script>
+</body>
+</html>
